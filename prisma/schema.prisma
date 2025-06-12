@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(cuid()) @map("_id")
+  email            String    @unique
+  password         String?
+  emailVerified    DateTime?
+  name             String?
+  Plan             PlanType  @default(free)
+  stripeCustomerId String?
+
+  currentSubscriptionId String?        
+  // currentSubscription   Subscription?  @relation("UserCurrentSubscription", fields: [currentSubscriptionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subscriptions         Subscription[] @relation("UserSubscriptions")
+  purchases             Purchase[]
+}
+
+model Course {
+  id          String     @id @default(cuid()) @map("_id")
+  title       String
+  description String
+  imageUrl    String
+  price       Float
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id               String @id @default(cuid()) @map("_id")
+  userId           String
+  courseId         String
+  amount           Float
+  purchaseDate     Int
+  stripePurchaseId String @unique
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model Subscription {
+  id                   String   @id @default(cuid()) @map("_id")
+  userId               String
+  planType             PlanType
+  currentPeriodStart   Int
+  currentPeriodEnd     Int
+  stripeSubscriptionId String   @unique
+  status               String
+  cancelAtPeriodEnd    Boolean
+
+  user        User  @relation("UserSubscriptions", fields: [userId], references: [id])
+  // currentUser User? @relation("UserCurrentSubscription")
+}
+
+enum PlanType {
+  free
+  month
+  year
+}
