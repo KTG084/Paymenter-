@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -30,13 +30,8 @@ import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  const [isSubscribed, setisSubscribed] = useState(false);
+  const isSubscribed = !!session?.user?.razorpayCustomerId;
 
-  useEffect(() => {
-  if (session?.user.razorpayCustomerId) {
-    setisSubscribed(true);
-  }
-}, [session]);
 
 
   return (
