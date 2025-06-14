@@ -70,7 +70,11 @@ const Courses = ({ courses }: Props) => {
                         e.preventDefault();
                         handleEnroll();
                       }}
-                      className="cursor-pointer px-4 py-1.5 text-sm font-semibold text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-md hover:bg-white/20 hover:shadow-fuchsia-500/30 transition-all duration-300"
+                      className="px-6 py-2 text-xm font-semibold text-white rounded-full 
+  bg-gradient-to-r from-pink-500 via-fuchsia-600 to-purple-600 
+  border border-fuchsia-500/30 backdrop-blur-md 
+  shadow-md hover:shadow-[0_0_25px_rgba(236,72,153,0.4)] 
+  hover:scale-105 transition-all duration-300 ease-in-out"
                     >
                       Enroll
                     </button>
