@@ -6,9 +6,7 @@ import {
   authRoutes,
   publicRoutes,
 } from "@/route";
-import { NextRequest, NextResponse } from "next/server";
-
-
+import { NextResponse } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
@@ -33,7 +31,17 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    let callbackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callbackUrl += nextUrl.search;
+    }
+
+    return NextResponse.redirect(
+      new URL(
+        `/auth/login?callbackUrl=${callbackUrl}&toast=login_required`,
+        nextUrl
+      )
+    );
   }
   return;
 });

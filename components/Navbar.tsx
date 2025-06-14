@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -20,8 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { User, Bolt, LogOut } from "lucide-react";
 const menuItems = [
-  { label: "Home", href: "/" },
-  { label: "Team", href: "/team" },
+  { label: "🏠 Home", href: "/" },
+  { label: "📖 Courses", href: "/courses" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Billing", href: "/billing" },
 ];
@@ -30,8 +30,14 @@ import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  console.log(status);
-  const [isSubscribed, setisSubscribed] = useState(true);
+  const [isSubscribed, setisSubscribed] = useState(false);
+
+  useEffect(() => {
+  if (session?.user.razorpayCustomerId) {
+    setisSubscribed(true);
+  }
+}, [session]);
+
 
   return (
     <nav className="w-full fixed top-0 left-0 z-50 px-8 py-4 bg-white/10 backdrop-blur-md border-b border-white/20 text-white shadow-lg">

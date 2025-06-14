@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
 import bcrypt from "bcryptjs";
+import Razorpay from "razorpay";
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_API_KEY,
+  key_secret: process.env.RAZORPAY_SECRET_API_KEY,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,11 +32,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const customer = await razorpay.customers.create({
+      name: username,
+      email,
+      fail_existing: 0,
+    });
+
     await prisma.user.create({
       data: {
         email,
         password: hashedPass,
         name: username,
+        razorpayCustomerId: customer.id,
       },
     });
 
@@ -38,10 +51,10 @@ export async function POST(req: NextRequest) {
       { message: "Registration successful" },
       { status: 200 }
     );
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to register user"
     return NextResponse.json(
-      { error: "Failed to register user" },
+      { error: message },
       { status: 500 }
     );
   } finally {

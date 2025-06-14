@@ -14,7 +14,7 @@ model User {
   emailVerified    DateTime?
   name             String?
   Plan             PlanType  @default(free)
-  stripeCustomerId String?
+  razorpayCustomerId String?
 
   currentSubscriptionId String?        
   // currentSubscription   Subscription?  @relation("UserCurrentSubscription", fields: [currentSubscriptionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -32,12 +32,12 @@ model Course {
 }
 
 model Purchase {
-  id               String @id @default(cuid()) @map("_id")
+  id               String   @id @default(cuid()) @map("_id")
   userId           String
   courseId         String
   amount           Float
   purchaseDate     Int
-  stripePurchaseId String @unique
+  razorpayPurchaseId String   @unique
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
@@ -45,13 +45,14 @@ model Purchase {
   @@unique([userId, courseId])
 }
 
+
 model Subscription {
   id                   String   @id @default(cuid()) @map("_id")
   userId               String
   planType             PlanType
   currentPeriodStart   Int
   currentPeriodEnd     Int
-  stripeSubscriptionId String   @unique
+  razorpaySubscriptionId String   @unique
   status               String
   cancelAtPeriodEnd    Boolean
 

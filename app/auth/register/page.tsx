@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -31,9 +31,15 @@ const formSchema = z.object({
 });
 
 import { signIn } from "next-auth/react";
+import { showToast } from "@/lib/toaster";
+import { Loader } from "lucide-react";
+import Link from "next/link";
 
 const Page = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const baseCallbackUrl = searchParams.get("callbackUrl") || "/courses";
+  const callbackUrl = `${baseCallbackUrl}?toast=register_success`;
+  const [loading, setloading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +50,7 @@ const Page = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setloading(true);
     try {
       const res = await fetch("/api/users/register", {
         method: "POST",
@@ -52,16 +59,37 @@ const Page = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
+      if (!res.ok) {
+        const errorMsg =
+          data?.error || "Registration failed. Please try again.";
+        showToast.error(errorMsg);
+        return;
+      }
+      
       await signIn("credentials", {
-        redirect: false,
         email: values.email,
         password: values.password,
+        callbackUrl,
       });
-      router.push("/");
-    } catch (err) {
-      console.error("Registration failed:", err);
-      
+
+      // if (signInResult?.error) {
+      //   const fallbackMessage = signInResult.error || "Auto-login failed";
+      //   showToast.error(fallbackMessage);
+      //   return;
+      // }
+
+      // showToast.success("You are registered successfully");
+      // router.push("/");
+    } catch (err: unknown) {
+      let fallbackMessage = "Something went wrong. Please try again.";
+
+      if (err instanceof Error) {
+        fallbackMessage = err.message;
+      }
+
+      showToast.error(fallbackMessage);
+    } finally {
+      setloading(false);
     }
   }
 
@@ -137,9 +165,10 @@ const Page = () => {
 
             <Button
               type="submit"
+              disabled={loading}
               className="w-full bg-gradient-to-r from-purple-700 to-fuchsia-600 hover:from-purple-800 hover:to-fuchsia-700 text-white font-medium px-4 py-2 rounded-lg shadow-md transition duration-300"
             >
-              Submit
+              {loading ? <Loader className="animate-spin w-5 h-5" /> : "Submit"}
             </Button>
           </form>
         </Form>
@@ -167,12 +196,12 @@ const Page = () => {
         </div>
         <p className="text-sm text-white/80 mt-6 text-center">
           Already have an account?{" "}
-          <a
-            href="/auth/login"
+          <Link
+            href={`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
             className="text-fuchsia-400 hover:text-fuchsia-300 font-semibold underline underline-offset-4 transition"
           >
-            Login
-          </a>
+            Register
+          </Link>
         </p>
       </div>
     </div>
