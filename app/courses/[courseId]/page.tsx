@@ -20,7 +20,7 @@ export default async function Page({
     },
   });
 
-  if (!session?.user.id || !courseId) {
+  
     if (!session?.user?.id || !courseId) {
       return (
         <div className="flex items-center justify-center min-h-screen text-lg text-red-500 font-semibold">
@@ -28,7 +28,7 @@ export default async function Page({
         </div>
       );
     }
-  }
+  
 
   const userCourse = await prisma.purchase.findUnique({
     where: {

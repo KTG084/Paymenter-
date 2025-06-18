@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import Razorpay from "razorpay";
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_API_KEY,
+  key_id: process.env.NEXT_PUBLIC_RAZORPAY_API_KEY!,
   key_secret: process.env.RAZORPAY_SECRET_API_KEY,
 });
 

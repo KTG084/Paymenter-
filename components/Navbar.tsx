@@ -26,18 +26,16 @@ const menuItems = [
   { label: "Billing", href: "/billing" },
 ];
 
+import { useCourseStore } from "@/store/courseStore";
 import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
   const isSubscribed = !!session?.user?.razorpayCustomerId;
 
-
-
   return (
     <nav className="w-full fixed top-0 left-0 z-50 px-8 py-4 bg-white/10 backdrop-blur-md border-b border-white/20 text-white shadow-lg">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
         <div className="text-2xl font-bold tracking-tight text-white flex items-center">
           🚀 MyWebsite
         </div>
@@ -113,8 +111,8 @@ const Navbar = () => {
 
                 <DropdownMenuItem
                   onClick={() => {
-                    signOut({ callbackUrl: "/" });
-                    console.log("its logged out");
+                    useCourseStore.getState().clearCourseid();
+                    signOut({ callbackUrl: "/?toast=logged_out" });
                   }}
                   className="flex items-center gap-2 text-red-400 hover:bg-red-500/20"
                 >

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Course } from "@prisma/client";
 import {
   Card,
@@ -12,7 +12,15 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { Download, FileText, FileTextIcon, PlayCircle } from "lucide-react";
+import {
+  Loader,
+  Download,
+  FileText,
+  FileTextIcon,
+  PlayCircle,
+} from "lucide-react";
+import { useEnroll } from "@/hooks/useEnroll";
+
 
 type Props = {
   userAccess: boolean;
@@ -20,6 +28,9 @@ type Props = {
 };
 
 const CourseIndi = ({ userAccess, courseData }: Props) => {
+  const { enroll } = useEnroll();
+  const [loading, setloading] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-fuchsia-700 to-purple-950 py-20 px-4 flex items-center justify-center">
       <div className="max-w-2xl w-full group">
@@ -87,12 +98,26 @@ const CourseIndi = ({ userAccess, courseData }: Props) => {
               <p className="text-fuchsia-400 font-semibold text-2xl text-center">
                 ₹{courseData.price.toFixed(2)}/- Only
               </p>
+
               <button
+                onClick={() => {
+                  try {
+                    setloading(true);
+                    enroll(courseData.id);
+                  } finally {
+                    setloading(false);
+                  }
+                }}
+                disabled={loading}
                 className="cursor-pointer px-7 py-2.5 bg-gradient-to-r from-pink-500 via-fuchsia-600 to-purple-600 
-      hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] hover:scale-105 
-      transition-transform duration-300 rounded-full text-white font-semibold text-lg tracking-wide"
+        hover:shadow-[0_0_20px_rgba(236,72,153,0.5)] hover:scale-105 
+        transition-transform duration-300 rounded-full text-white font-semibold text-lg tracking-wide"
               >
-                Enroll Now
+                {loading ? (
+                  <Loader className="animate-spin w-5 h-5" />
+                ) : (
+                  "Enroll Now"
+                )}
               </button>
 
               <p className="text-sm text-gray-400 italic">

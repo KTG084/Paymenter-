@@ -1,23 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
 import { Course } from "@prisma/client";
 
 type Props = {
   courses: Course[];
 };
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useEnroll } from "@/hooks/useEnroll";
 const Courses = ({ courses }: Props) => {
-  const router = useRouter();
-
-  function handleEnroll() {
-    router.push("/billing");
-  }
+  const { enroll } = useEnroll();
+  const [loading, setloading] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-fuchsia-700 to-purple-950 py-25 px-4">
@@ -68,7 +65,12 @@ const Courses = ({ courses }: Props) => {
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        handleEnroll();
+                        try {
+                          setloading(true);
+                          enroll(course.id);
+                        } finally {
+                          setloading(false);
+                        }
                       }}
                       className="px-6 py-2 text-xm font-semibold text-white rounded-full 
   bg-gradient-to-r from-pink-500 via-fuchsia-600 to-purple-600 
@@ -76,7 +78,11 @@ const Courses = ({ courses }: Props) => {
   shadow-md hover:shadow-[0_0_25px_rgba(236,72,153,0.4)] 
   hover:scale-105 transition-all duration-300 ease-in-out"
                     >
-                      Enroll
+                      {loading ? (
+                        <Loader className="animate-spin w-5 h-5" />
+                      ) : (
+                        "Enroll"
+                      )}
                     </button>
                   </div>
                 </div>
