@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       receipt: `rcpt_${Date.now()}`,
       customer_id: session?.user.razorpayCustomerId,
       notes: {
-        userId: session.user.id,
+        userId: session.user.id || "unknown",
         courseId: courseId,
       },
     };

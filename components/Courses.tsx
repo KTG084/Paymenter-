@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Course } from "@prisma/client";
 
 type Props = {
@@ -89,12 +88,6 @@ const Courses = ({ courses }: Props) => {
               </Link>
             </div>
           ))}
-        </div>
-
-        <div className="mt-16 flex justify-center">
-          <Button className="px-6 py-2.5 text-sm sm:text-base font-medium text-white bg-gray-900/80 hover:bg-gray-900 rounded-xl shadow-lg transition-all flex items-center gap-2">
-            Explore Premium Plans <ArrowRight className="w-4 h-4" />
-          </Button>
         </div>
       </>
     </div>

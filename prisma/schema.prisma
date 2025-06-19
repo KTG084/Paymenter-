@@ -12,6 +12,7 @@ model User {
   email              String    @unique
   password           String?
   emailVerified      DateTime?
+  image              String?
   name               String?
   Plan               PlanType  @default(free)
   razorpayCustomerId String?
@@ -20,6 +21,26 @@ model User {
   // currentSubscription   Subscription?  @relation("UserCurrentSubscription", fields: [currentSubscriptionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   subscriptions         Subscription[] @relation("UserSubscriptions")
   purchases             Purchase[]
+  accounts              Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid()) @map("_id")
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Course {

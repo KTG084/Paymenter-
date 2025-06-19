@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { Course } from "@prisma/client";
 import Link from "next/link";
+
+
 export default async function Page({
   params,
 }: {
@@ -42,11 +44,6 @@ export default async function Page({
   });
 
   const userAccess = Boolean(userCourse);
-
-
-// purchasr kam
-
-
 
 return (
   <div>

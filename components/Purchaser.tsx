@@ -123,7 +123,7 @@ const Purchaser = ({ courseData }: Props) => {
               setTimeout(() => {
                 router.push(`/courses/${courseData.id}`);
               }, 3000);
-              // Optionally redirect or refresh access
+              
             } else {
               showToast.error(
                 verifyData.error || "Payment verification failed."
@@ -148,7 +148,7 @@ const Purchaser = ({ courseData }: Props) => {
           courseId: courseData.id,
         },
         theme: {
-          color: "#8b5cf6",
+          color: "#a21caf",
         },
       };
 
