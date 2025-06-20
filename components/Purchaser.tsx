@@ -13,6 +13,8 @@ import { showToast } from "@/lib/toaster";
 import { Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { TextShimmer } from "@/components/ui/text-shimmer";
+
 interface RazorpayPrefill {
   name: string;
   email: string;
@@ -123,7 +125,6 @@ const Purchaser = ({ courseData }: Props) => {
               setTimeout(() => {
                 router.push(`/courses/${courseData.id}`);
               }, 3000);
-              
             } else {
               showToast.error(
                 verifyData.error || "Payment verification failed."
@@ -232,7 +233,12 @@ transition-transform duration-300 rounded-full text-white font-semibold text-lg 
 flex items-center justify-center"
                 >
                   {loading ? (
-                    <Loader className="animate-spin w-5 h-5" />
+                    <span className="flex items-center gap-2">
+                      <Loader className="animate-spin w-4 h-4 text-white" />
+                      <TextShimmer className="font-mono text-sm" duration={1}>
+                        Processing...
+                      </TextShimmer>
+                    </span>
                   ) : (
                     "Pay Now"
                   )}

@@ -16,11 +16,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Script from "next/script";
-import { Check, Loader2Icon } from "lucide-react";
+import { Check, Loader, Loader2Icon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Subscription } from "@prisma/client";
 import { Button } from "./ui/button";
 import { showToast } from "@/lib/toaster";
+import { TextShimmer } from "./ui/text-shimmer";
 type Props = {
   userSubscription: Subscription | null;
 };
@@ -83,6 +84,7 @@ const ProPlans = ({ userSubscription }: Props) => {
         showToast.error("Something went wrong. Try again.");
         return;
       }
+      console.log("Razorpay Subscription ID:", data.subscriptionId);
       const selectedPlan = PRO_PLANS.find((plan) => plan.id === planId);
       if (!selectedPlan) {
         showToast.warning("Invalid plan selected.");
@@ -163,10 +165,15 @@ const ProPlans = ({ userSubscription }: Props) => {
       {loader && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
-            <Loader2Icon className="h-10 w-10 animate-spin text-white" />
-            <p className="text-white text-lg font-medium">
-              Verifying your payment...
-            </p>
+            <span className="flex items-center gap-2">
+              <Loader className="animate-spin w-4 h-4 text-white" />
+              <TextShimmer
+                className="text-white text-lg font-medium"
+                duration={1}
+              >
+                Verifying your payment...
+              </TextShimmer>
+            </span>
           </div>
         </div>
       )}
@@ -257,10 +264,12 @@ const ProPlans = ({ userSubscription }: Props) => {
                   }
                 >
                   {loading === plan.id ? (
-                    <>
-                      <Loader2Icon className="mr-2 size-4 animate-spin" />
-                      Processing...
-                    </>
+                    <span className="flex items-center gap-2">
+                      <Loader className="animate-spin w-4 h-4 text-white" />
+                      <TextShimmer className="font-mono text-sm" duration={1}>
+                        Processing...
+                      </TextShimmer>
+                    </span>
                   ) : status === "authenticated" &&
                     userSubscription?.status === "active" &&
                     userSubscription.planType === plan.id ? (

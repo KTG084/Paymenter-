@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import { Course } from "@prisma/client";
 
@@ -11,19 +11,34 @@ type Props = {
 
 import Link from "next/link";
 import { useEnroll } from "@/hooks/useEnroll";
+import { TextEffect } from "@/components/ui/text-effect";
+import { showToast } from "@/lib/toaster";
 const Courses = ({ courses }: Props) => {
   const { enroll } = useEnroll();
   const [loading, setloading] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-fuchsia-700 to-purple-950 py-25 px-4">
-      <h1 className="text-4xl font-bold text-center mb-8 tracking-wider text-white drop-shadow-lg">
-        Explore Our Courses
-      </h1>
-      <h3 className="text-xl font-medium text-center mb-14 tracking-wider text-white drop-shadow-lg">
+      <div className="flex justify-center mb-8">
+        <TextEffect
+          className="text-4xl font-bold text-center tracking-wider text-white drop-shadow-lg"
+          preset="fade-in-blur"
+          speedReveal={1.1}
+          speedSegment={0.5}
+        >
+          Explore Our Courses
+        </TextEffect>
+      </div>
+
+      <TextEffect
+        className="text-xl font-medium text-center mb-14 tracking-wider text-white drop-shadow-lg"
+        preset="fade-in-blur"
+        speedReveal={1.1}
+        speedSegment={2.5}
+      >
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni mollitia
         ratione ipsa et sit cumque illo dolores officiis, placeat un
-      </h3>
+      </TextEffect>
 
       <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
@@ -67,6 +82,9 @@ const Courses = ({ courses }: Props) => {
                         try {
                           setloading(true);
                           enroll(course.id);
+                        } catch (error) {
+                          console.error("Enrollment failed:", error);
+                          showToast.error("Enrollment failed");
                         } finally {
                           setloading(false);
                         }

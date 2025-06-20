@@ -34,7 +34,9 @@ export async function POST(req: NextRequest) {
       plan_id,
       customer_notify: 1,
       total_count: totalCount,
-    });
+      customer_id: session.user.razorpayCustomerId,
+    } as any);
+    
     return NextResponse.json(
       { subscriptionId: subscription.id },
       { status: 200 }
