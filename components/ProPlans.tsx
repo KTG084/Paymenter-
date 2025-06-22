@@ -2,7 +2,7 @@
 
 declare global {
   interface Window {
-    Razorpay: new (options: RazorpaySubscriptionOptions) => any;
+    Razorpay: any;
   }
 }
 import { PRO_PLANS } from "@/constants";
@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Script from "next/script";
-import { Check, Loader, Loader2Icon } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Subscription } from "@prisma/client";
 import { Button } from "./ui/button";
@@ -84,7 +84,7 @@ const ProPlans = ({ userSubscription }: Props) => {
         showToast.error("Something went wrong. Try again.");
         return;
       }
-      console.log("Razorpay Subscription ID:", data.subscriptionId);
+
       const selectedPlan = PRO_PLANS.find((plan) => plan.id === planId);
       if (!selectedPlan) {
         showToast.warning("Invalid plan selected.");
@@ -116,7 +116,13 @@ const ProPlans = ({ userSubscription }: Props) => {
             const verifyRes = await fetch("/api/pro/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(response),
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_subscription_id: response.razorpay_subscription_id,
+                razorpay_signature: response.razorpay_signature,
+                userId: session?.user.id,
+                Plan: selectedPlan.id,
+              }),
             });
 
             if (!verifyRes.ok) {
@@ -145,6 +151,14 @@ const ProPlans = ({ userSubscription }: Props) => {
           }
         },
       };
+      if (
+        typeof window !== "undefined" &&
+        typeof window.Razorpay !== "function"
+      ) {
+        showToast.error("Razorpay is not available. Please try again later.");
+        setloading("");
+        return;
+      }
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
@@ -160,6 +174,9 @@ const ProPlans = ({ userSubscription }: Props) => {
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="afterInteractive"
+        onLoad={() => {
+          console.log("Razorpay script loaded");
+        }}
       />
 
       {loader && (

@@ -40,9 +40,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    console.log("Expected Signature:", expectedSignature);
-    console.log("Received Signature:", razorpay_signature);
-
+   
     //saving the purchase;
     await prisma.purchase.create({
       data: {

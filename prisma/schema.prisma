@@ -66,15 +66,32 @@ model Purchase {
   @@unique([userId, courseId])
 }
 
+enum SubscriptionStatus {
+  active
+  cancelled
+  pending
+  completed
+  paused
+  halted
+}
+
 model Subscription {
-  id                     String   @id @default(cuid()) @map("_id")
+  id                     String             @id @default(cuid()) @map("_id")
   userId                 String
   planType               PlanType
-  currentPeriodStart     Int
-  currentPeriodEnd       Int
-  razorpaySubscriptionId String   @unique
-  status                 String
+  currentPeriodStart     DateTime
+  currentPeriodEnd       DateTime
+  razorpaySubscriptionId String             @unique
+  razorpayPlanId         String?
+  status                 SubscriptionStatus
   cancelAtPeriodEnd      Boolean
+
+  cancellationDate DateTime?
+  endedAt          DateTime?
+  trialEnd         DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation("UserSubscriptions", fields: [userId], references: [id])
   // currentUser User? @relation("UserCurrentSubscription")
