@@ -16,8 +16,6 @@ const Page = async () => {
     <main className="min-h-screen flex flex-col bg-gradient-to-br from-purple-950 via-fuchsia-700 to-purple-950">
       <div className="w-full">
         <Courses courses={courses.slice(0, 3)} />
-       
-        <ProPlans userSubscription={null}/>
       </div>
     </main>
   );
