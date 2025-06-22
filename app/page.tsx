@@ -1,9 +1,7 @@
 import Courses from "@/components/Courses";
 import React from "react";
 import { prisma } from "@/db/prisma";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import ProPlans from "@/components/ProPlans";
+
 
 const Page = async () => {
   // make it synchronous and then useEffect for the login and
